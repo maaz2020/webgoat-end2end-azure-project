@@ -61,3 +61,38 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+# Terraform files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraformrc
+terraform.tfvars
+
+# Ignore plan files
+*.tfplan
+
+# Ignore crash logs
+crash.log
+
+# Ignore provider-specific overrides
+override.tf
+override.tf.json
+terraform.rc
+
+# Terraform ignore file (optional)
+.terraformignore
+
+# Large binary files
+*.exe
+*.dll
+*.so
+*.dmg
+*.iso
+*.img
+*.bin
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
