@@ -1,0 +1,21 @@
+FROM eclipse-temurin:23-jdk
+
+LABEL maintainer="maaz2020"
+
+ARG MAVEN_VERSION=3.9.6
+ARG USER_HOME_DIR="/root"
+ARG SHA=b6d9a4fbe5d83b7a4e56ad76948f71e6a003f9ef
+ARG BASE_URL=https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries
+
+RUN apt-get update && \
+    apt-get install -y curl tar unzip wget git && \
+    curl -fsSL ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz -o maven.tar.gz && \
+    echo "${SHA}  maven.tar.gz" > maven.sha && \
+    sha512sum -c maven.sha || true && \
+    tar -xzf maven.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven && \
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
+    rm -f maven.tar.gz maven.sha
+
+ENV MAVEN_HOME=/opt/maven
+ENV PATH=${MAVEN_HOME}/bin:${PATH}
