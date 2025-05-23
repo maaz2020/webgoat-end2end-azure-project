@@ -1,0 +1,39 @@
+stages:
+- runSASTScanUsingSonarCloud
+- runSCAScanUsingSnyk
+- runDASTScanUsingZAP
+
+# SAST - SonarCloud
+run-sast-job:
+  stage: runSASTScanUsingSonarCloud
+  image: docker.io/warsiviews123/java23-maven3.9.6:latest
+  script: |
+    mvn verify package sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.organization=$SONAR_ORG -Dsonar.projectKey=$SONAR_KEY -Dsonar.token=$SONAR_TOKEN
+  only:
+  - master
+
+# SCA - Snyk
+run-sca-job:
+  stage: runSCAScanUsingSnyk
+  image: docker.io/warsiviews123/java23-maven3.9.6:latest
+  script: |
+    export SNYK_TOKEN=$SNYK_TOKEN
+    mvn snyk:test -fn
+  only:
+  - master
+
+# DAST - OWASP ZAP
+run-dast-job:
+  stage: runDASTScanUsingZAP
+  image: docker.io/warsiviews123/java23-maven3.9.6:latest
+  script: |
+    apt-get update
+    apt-get -y install wget
+    wget https://github.com/zaproxy/zaproxy/releases/download/v2.16.0/ZAP_2.16.0_Linux.tar.gz
+    mkdir zap
+    tar -xvf ZAP_2.16.0_Linux.tar.gz
+    cd ZAP_2.16.0
+    ./zap.sh -cmd -quickurl http://172.190.247.112:8080/WebGoat/ -quickprogress -quickout ../zap_report.html 
+  artifacts:
+    paths:
+    - zap_report.html
